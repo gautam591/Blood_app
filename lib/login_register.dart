@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:post_found/register.dart';
 import 'package:post_found/home_screen.dart';
+
 
 final FocusNode _emailFocus = FocusNode();
 final FocusNode _passwordFocus = FocusNode();
@@ -53,6 +55,13 @@ class LoginRegisterPage extends StatelessWidget {
               height: 50.0, // Set a fixed button height
               child: ElevatedButton(
                 onPressed: () {
+                  Future.delayed(Duration(seconds: 2), () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => RegisterPage(),
+                      ),
+                    );
+                  });
                   // Implement registration logic here
                   _emailFocus.unfocus();
                   _passwordFocus.unfocus();

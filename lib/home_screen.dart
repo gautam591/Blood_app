@@ -3,6 +3,7 @@ import 'page1.dart'; // Import the Page1 widget
 import 'page2.dart'; // Import the Page2 widget
 import 'page3.dart'; // Import the Page3 widget
 import 'page4.dart'; // Import the Page4 widget
+import 'editProfile.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -62,7 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Edit Profile'),
               onTap: () {
                 // Navigate to the home page or perform an action
-                Navigator.pop(context);
+                Future.delayed(Duration(seconds: 4), () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => RegisterPage(),
+                    ),
+                  );
+                });
               },
             ),
             ListTile(
