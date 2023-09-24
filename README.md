@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # post_found
 
 A new Flutter project.
@@ -17,4 +18,9 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 =======
 # Blood_app
+=======
+Your local changes
+=======
+Remote changes
+>>>>>>> origin/main
 >>>>>>> origin/main
