@@ -14,7 +14,10 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController bloodGroupController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  TextEditingController addressCountryController = TextEditingController();
+  TextEditingController addressStateController = TextEditingController();
+  TextEditingController addressCityController = TextEditingController();
+  TextEditingController addressAreaController = TextEditingController();
 
   int currentStep = 0;
   bool complete = false;
@@ -49,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Stepper(
         currentStep: currentStep,
         onStepContinue: () {
-          if (currentStep < 2) {
+          if (currentStep < 4) {
             setState(() {
               currentStep++;
             });
@@ -77,22 +80,6 @@ class _RegisterPageState extends State<RegisterPage> {
         },
         steps: [
           Step(
-            title: Text('Personal Information'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildTextField("Name", nameController),
-                SizedBox(height: 10),
-                _buildTextField("Phone Number", phoneNumberController),
-                SizedBox(height: 10),
-                _buildTextField("Blood group (e.g. O-, AB-, O+)", bloodGroupController),
-                SizedBox(height: 10),
-                _buildTextField("Address", addressController),
-              ],
-            ),
-            isActive: currentStep == 0,
-          ),
-          Step(
             title: Text('Account Information'),
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,9 +89,54 @@ class _RegisterPageState extends State<RegisterPage> {
                 _buildTextField("Password", passwordController),
                 SizedBox(height: 10),
                 _buildTextField("Confirm Password", confirmPasswordController),
+
+              ],
+            ),
+            isActive: currentStep == 0,
+          ),
+          Step(
+            title: Text('Personal Information'),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTextField("Name", nameController),
+                SizedBox(height: 10),
+                _buildTextField("Phone Number", phoneNumberController),
+                SizedBox(height: 10),
+                _buildTextField("Email address", emailController),
+
               ],
             ),
             isActive: currentStep == 1,
+          ),
+          Step(
+            title: Text('Blood Group'),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 10),
+                _buildTextField("Blood group (e.g. O-, AB-, O+)", bloodGroupController),
+              ],
+            ),
+            isActive: currentStep == 2,
+          ),
+
+          Step(
+            title: Text('Address info'),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTextField("Country", addressCountryController),
+                SizedBox(height: 10),
+                _buildTextField("State", addressStateController),
+                SizedBox(height: 10),
+                _buildTextField("city", addressCityController),
+                SizedBox(height: 10),
+                _buildTextField("Area", addressAreaController),
+
+              ],
+            ),
+            isActive: currentStep == 3,
           ),
           Step(
             title: Text('Confirmation'),
@@ -113,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text("Review and confirm your information."),
               ],
             ),
-            isActive: currentStep == 2,
+            isActive: currentStep == 4,
           ),
         ],
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'page1.dart'; // Import the Page1 widget
-import 'page2.dart'; // Import the Page2 widget
-import 'page3.dart'; // Import the Page3 widget
-import 'page4.dart'; // Import the Page4 widget
+import 'Tabs/page1.dart'; // Import the Page1 widget
+import 'Tabs/page2.dart'; // Import the Page2 widget
+import 'Tabs/page3.dart'; // Import the Page3 widget
+import 'Tabs/page4.dart'; // Import the Page4 widget
 import 'editProfile.dart';
 
 
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Events',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,color: Colors.black),
+            icon: Icon(Icons.notifications_active,color: Colors.black),
             label: 'Profile',
           ),
         ],
