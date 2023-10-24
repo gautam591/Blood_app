@@ -20,6 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Register Page'),
+        backgroundColor: Colors.red.shade400,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -59,6 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   );
                 });
               },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
               child: Text("Register"),
             ),
           ],

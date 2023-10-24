@@ -12,6 +12,7 @@ class LoginRegisterPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login/Register'),
+        backgroundColor: Colors.red.shade400,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -46,6 +47,7 @@ class LoginRegisterPage extends StatelessWidget {
                   _emailFocus.unfocus();
                   _passwordFocus.unfocus();
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
                 child: Text('Sign-In'),
               ),
             ),
@@ -66,6 +68,7 @@ class LoginRegisterPage extends StatelessWidget {
                   _emailFocus.unfocus();
                   _passwordFocus.unfocus();
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
                 child: Text('Sign-Up'),
               ),
             ),

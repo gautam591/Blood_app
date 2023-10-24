@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:post_found/EventForm.dart';
 class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -156,8 +157,36 @@ class Page3 extends StatelessWidget {
               ],
             ),
           ),
+          AddButton(),
         ],
       ),
     );
   }
 }
+
+class AddButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => EventForm(),
+                ),
+              );
+            });
+            // Add your logic to handle the addition of information
+          },
+          child: Icon(Icons.add),
+          backgroundColor: Colors.redAccent,
+        ),
+      ),
+    );
+  }
+}
+

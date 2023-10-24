@@ -4,6 +4,7 @@ import 'Tabs/page2.dart'; // Import the Page2 widget
 import 'Tabs/page3.dart'; // Import the Page3 widget
 import 'Tabs/page4.dart'; // Import the Page4 widget
 import 'editProfile.dart';
+import 'package:flutter/src/material/colors.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red.shade400,
         title: Text('Manabata'),
         actions: <Widget>[
           // Add a search icon at the right corner
@@ -49,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.red.shade400,
               ),
               child: Text(
                 'Samir Bhadel',
@@ -100,28 +102,32 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.red.shade400,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.bloodtype_rounded,color: Colors.black),
             label: 'Emergency',
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline_outlined,color: Colors.black),
+            icon: Icon(Icons.newspaper_outlined,color: Colors.black),
             label: 'Create Post',
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event_available_outlined,color: Colors.black),
             label: 'Events',
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_active,color: Colors.black),
-            label: 'Profile',
+            label: 'Notification',
+            backgroundColor: Colors.red.shade400,
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.red,
+        selectedItemColor: Colors.black,
       ),
     );
   }
