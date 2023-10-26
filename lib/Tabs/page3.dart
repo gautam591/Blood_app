@@ -183,7 +183,7 @@ class AddButton extends StatelessWidget {
             // Add your logic to handle the addition of information
           },
           child: Icon(Icons.add),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.red.shade500,
         ),
       ),
     );

@@ -102,27 +102,27 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.red.shade400,
+        backgroundColor: Colors.red.shade300,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.bloodtype_rounded,color: Colors.black),
             label: 'Emergency',
-            backgroundColor: Colors.red.shade400,
+            backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.newspaper_outlined,color: Colors.black),
             label: 'Create Post',
-            backgroundColor: Colors.red.shade400,
+            backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event_available_outlined,color: Colors.black),
             label: 'Events',
-            backgroundColor: Colors.red.shade400,
+            backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_active,color: Colors.black),
             label: 'Notification',
-            backgroundColor: Colors.red.shade400,
+            backgroundColor: Colors.red.shade300,
           ),
         ],
         currentIndex: _selectedIndex,

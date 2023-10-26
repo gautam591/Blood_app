@@ -26,7 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Page'),
+        backgroundColor: Colors.red.shade300,
+        title: Text('Edit Profile Page'),
         // Add a back arrow button in the app bar
         leading: IconButton(
           icon: Icon(Icons.arrow_back),

@@ -16,6 +16,7 @@ class _emergencyFormState extends State<EmergencyForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red.shade300,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -87,6 +88,7 @@ class _emergencyFormState extends State<EmergencyForm> {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade300),
               onPressed: () {
                 // Handle the post button action here
                 // You can access the selected blood group using 'selectedBloodGroup'

@@ -14,6 +14,7 @@ class _eventFormState extends State<EventForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red.shade300,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -26,8 +27,7 @@ class _eventFormState extends State<EventForm> {
             });// Navigate back to the previous screen/page
           },
         ),
-        title: Text('Create Post'),
-        backgroundColor: Colors.red.shade400,
+        title: Text('Create Event'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -37,7 +37,7 @@ class _eventFormState extends State<EventForm> {
             Row(
               children: <Widget>[
                 Text(
-                  'Select Blood Group: ',
+                  'Enter Event Details',
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -69,7 +69,18 @@ class _eventFormState extends State<EventForm> {
               ),
             ),
             SizedBox(height: 16.0),
+            TextField(
+              onChanged: (value) {
+                // Handle description input
+              },
+              decoration: InputDecoration(
+                hintText: 'Event Date',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
               onPressed: () {
                 // Handle the post button action here
                 // You can access the selected blood group using 'selectedBloodGroup'
