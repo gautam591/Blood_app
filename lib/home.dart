@@ -3,16 +3,16 @@ import 'Tabs/page1.dart'; // Import the Page1 widget
 import 'Tabs/page2.dart'; // Import the Page2 widget
 import 'Tabs/page3.dart'; // Import the Page3 widget
 import 'Tabs/page4.dart'; // Import the Page4 widget
-import 'editProfile.dart';
-import 'package:flutter/src/material/colors.dart';
+import 'edit_profile.dart';
+import 'login.dart';
 
 
-class HomeScreen extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
@@ -33,11 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red.shade400,
-        title: Text('Manabata'),
+        title: const Text('Manabata'),
         actions: <Widget>[
           // Add a search icon at the right corner
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               // Implement search functionality here
             },
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.red.shade400,
               ),
-              child: Text(
+              child: const Text(
                 'Samir Bhadel',
                 style: TextStyle(
                   color: Colors.white,
@@ -62,38 +62,50 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              title: Text('Edit Profile'),
+              title: const Text('Edit Profile'),
               onTap: () {
                 // Navigate to the home page or perform an action
-                Future.delayed(Duration(seconds: 4), () {
+                Future.delayed(const Duration(seconds: 0), () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (BuildContext context) => RegisterPage(),
+                      builder: (BuildContext context) => EditProfilePage(),
                     ),
                   );
                 });
               },
             ),
             ListTile(
-              title: Text('My Rewards'),
+              title: const Text('My Rewards'),
               onTap: () {
                 // Navigate to the profile page or perform an action
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              title: Text('Account setting'),
+              title: const Text('Account Settings'),
               onTap: () {
                 // Navigate to the profile page or perform an action
                 Navigator.pop(context);
               },
             ),
-
             ListTile(
-              title: Text('Report'),
+              title: const Text('Report'),
               onTap: () {
                 // Navigate to the profile page or perform an action
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Log Out'),
+              onTap: () {
+                // Navigate to the profile page or perform an action
+                Future.delayed(const Duration(seconds: 0), () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => LoginPage(),
+                    ),
+                  );
+                });
               },
             ),
             // Add more menu items as needed
@@ -102,25 +114,25 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.red.shade300,
+        backgroundColor: Colors.red.shade200,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.bloodtype_rounded,color: Colors.black),
+            icon: const Icon(Icons.bloodtype_rounded,color: Colors.black),
             label: 'Emergency',
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.newspaper_outlined,color: Colors.black),
+            icon: const Icon(Icons.newspaper_outlined,color: Colors.black),
             label: 'Create Post',
             backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event_available_outlined,color: Colors.black),
+            icon: const Icon(Icons.event_available_outlined,color: Colors.black),
             label: 'Events',
             backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_active,color: Colors.black),
+            icon: const Icon(Icons.notifications_active,color: Colors.black),
             label: 'Notification',
             backgroundColor: Colors.red.shade300,
           ),

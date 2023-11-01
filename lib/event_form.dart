@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:post_found/Tabs/page1.dart';
-import 'package:post_found/home_screen.dart';
+import 'package:post_found/home.dart';
 
-class EmergencyForm extends StatefulWidget {
+class EventForm extends StatefulWidget {
   @override
-  _emergencyFormState createState() => _emergencyFormState();
+  _eventFormState createState() => _eventFormState();
 }
 
-class _emergencyFormState extends State<EmergencyForm> {
+class _eventFormState extends State<EventForm> {
   TextEditingController postController = TextEditingController();
-  String selectedBloodGroup = 'A+';
-  List<String> bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +21,13 @@ class _emergencyFormState extends State<EmergencyForm> {
             Future.delayed(Duration(seconds: 2), () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(),
+                  builder: (BuildContext context) => HomePage(),
                 ),
               );
             });// Navigate back to the previous screen/page
           },
         ),
-        title: Text('Create Post'),
+        title: Text('Create Event'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,7 +37,7 @@ class _emergencyFormState extends State<EmergencyForm> {
             Row(
               children: <Widget>[
                 Text(
-                  'Select Blood Group: ',
+                  'Enter Event Details',
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -49,22 +47,6 @@ class _emergencyFormState extends State<EmergencyForm> {
                   decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: DropdownButton<String>(
-                    value: selectedBloodGroup,
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        setState(() {
-                          selectedBloodGroup = newValue;
-                        });
-                      }
-                    },
-                    items: bloodGroups.map((String bloodGroup) {
-                      return DropdownMenuItem<String>(
-                        value: bloodGroup,
-                        child: Text(bloodGroup),
-                      );
-                    }).toList(),
                   ),
                 ),
               ],
@@ -87,8 +69,18 @@ class _emergencyFormState extends State<EmergencyForm> {
               ),
             ),
             SizedBox(height: 16.0),
+            TextField(
+              onChanged: (value) {
+                // Handle description input
+              },
+              decoration: InputDecoration(
+                hintText: 'Event Date',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade300),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
               onPressed: () {
                 // Handle the post button action here
                 // You can access the selected blood group using 'selectedBloodGroup'

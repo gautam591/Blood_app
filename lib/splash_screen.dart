@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_register.dart'; // Import the HomeScreen widget
+import 'package:post_found/home.dart';
+import 'login.dart'; // Import the HomeScreen widget
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -11,10 +12,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // Simulate a loading delay (e.g., loading data from a server)
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 0), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => LoginRegisterPage(),
+          builder: (BuildContext context) => HomePage(),
         ),
       );
     });
@@ -34,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             fit: BoxFit.fill,
           ),
           // Centered Loading Indicator
-          Center(
+          const Center(
             child: CircularProgressIndicator(color:Colors.black),
           ),
         ],

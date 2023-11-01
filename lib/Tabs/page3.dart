@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:post_found/EventForm.dart';
+import 'package:post_found/event_form.dart';
 class Page3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -173,7 +173,7 @@ class AddButton extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: FloatingActionButton(
           onPressed: () {
-            Future.delayed(Duration(seconds: 2), () {
+            Future.delayed(Duration(seconds: 0), () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (BuildContext context) => EventForm(),

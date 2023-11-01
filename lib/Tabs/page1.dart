@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:post_found/EmergencyForm.dart';
+import 'package:post_found/emergency_form.dart';
 class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class AddButton extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: FloatingActionButton(
           onPressed: () {
-            Future.delayed(Duration(seconds: 2), () {
+            Future.delayed(Duration(seconds: 0), () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (BuildContext context) => EmergencyForm(),
