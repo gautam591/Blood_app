@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Tabs/page1.dart'; // Import the Page1 widget
 import 'Tabs/page2.dart'; // Import the Page2 widget
@@ -5,6 +7,8 @@ import 'Tabs/page3.dart'; // Import the Page3 widget
 import 'Tabs/page4.dart'; // Import the Page4 widget
 import 'edit_profile.dart';
 import 'login.dart';
+import 'requests.dart' as request;
+
 
 
 class HomePage extends StatefulWidget {
@@ -14,6 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  Map<String, dynamic> user = {'uid': 'Loading...'};
+
+  TextEditingController titleController = TextEditingController();
+  bool dataFetched = false; // Add a flag to track if data has been fetched.
+
 
   final List<Widget> _pages = [
     Page1(),
@@ -26,6 +35,27 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // _HomePageState() {
+  //   setUserData();
+  // }
+  @override
+  void initState() {
+    super.initState();
+    setUserData();
+    dataFetched = true;
+  }
+
+  Future<void> setUserData() async {
+    String userRaw = await request.getLocalData('user') as String;
+    setState(() {
+      user = json.decode(userRaw);
+      dataFetched = true; // Set the flag to indicate data has been fetched.
+    });
+    if (kDebugMode) {
+      print('Set User in Home: ${user['uid']}');
+    }
   }
 
   @override
@@ -53,13 +83,14 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: Colors.red.shade400,
               ),
-              child: const Text(
-                'Samir Bhadel',
-                style: TextStyle(
+              child: dataFetched ?
+                Text(
+                user['uid'],
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                 ),
-              ),
+              ) : const CircularProgressIndicator(),
             ),
             ListTile(
               title: const Text('Edit Profile'),
@@ -102,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                 Future.delayed(const Duration(seconds: 0), () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (BuildContext context) => LoginPage(),
+                      builder: (BuildContext context) => const LoginPage(),
                     ),
                   );
                 });
