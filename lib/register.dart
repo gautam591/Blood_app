@@ -96,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Alerts.showGeneral("Please proceed to login with the user (${usernameController.text}) you just registered with!");
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
                         );
                       }
                       else{

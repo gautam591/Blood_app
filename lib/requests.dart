@@ -15,6 +15,9 @@ const apiURLS = {
 Future<dynamic> getLocalData(String key) async {
   final prefs = await SharedPreferences.getInstance();
   dynamic data = prefs.getString(key);
+  if (data == null) {
+    return '';
+  }
   return data;
 }
 
