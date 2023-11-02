@@ -28,7 +28,7 @@ Future<void> deleteLocalData(String key) async {
 class RequestHelper {
   static Future<String> getCSRFToken() async {
     String csrftoken = await getLocalData('CSRFToken') as String;
-    const url = 'http://10.0.2.2:8000/api/user/getcsrf/';
+    const url = 'https://leonardo674.pythonanywhere.com/api/user/getcsrf/';
     final headers = {
       'Content-Type': 'application/json',
       'Cookie': 'csrftoken=$csrftoken',
@@ -85,7 +85,7 @@ class API {
 
   static Future<Map<String, dynamic>> login(Map<String, String> data) async{
     String csrf = await RequestHelper.getCSRFToken();
-    const url = 'http://10.0.2.2:8000/api/user/login/';
+    const url = 'https://leonardo674.pythonanywhere.com/api/user/login/';
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'csrftoken=$csrf;',
@@ -145,7 +145,7 @@ class API {
 
   static Future<Map<String, dynamic>> register(Map<String, String> data) async{
     String csrf = await RequestHelper.getCSRFToken();
-    const url = 'http://10.0.2.2:8000/api/user/register/';
+    const url = 'https://leonardo674.pythonanywhere.com/api/user/register/';
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'csrftoken=$csrf;',
