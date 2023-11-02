@@ -4,6 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool refreshCSRF = true;
+const host = 'http://leonardo674.pythonanywhere.com';
+const apiURLS = {
+  'getCSRF'   : '$host/api/user/getcsrf/',
+  'login'     : '$host/api/user/login/',
+  'logout'    : '$host/api/user/logout/',
+  'register'  : '$host/api/user/register/',
+};
 
 Future<dynamic> getLocalData(String key) async {
   final prefs = await SharedPreferences.getInstance();
@@ -28,7 +35,6 @@ Future<void> deleteLocalData(String key) async {
 class RequestHelper {
   static Future<String> getCSRFToken() async {
     String csrftoken = await getLocalData('CSRFToken') as String;
-    const url = 'https://leonardo674.pythonanywhere.com/api/user/getcsrf/';
     final headers = {
       'Content-Type': 'application/json',
       'Cookie': 'csrftoken=$csrftoken',
@@ -36,7 +42,7 @@ class RequestHelper {
       'Accept': '*/*',
       'Connection': 'keep-alive',
     };
-    final response = await http.post(Uri.parse(url), headers: headers);
+    final response = await http.post(Uri.parse(apiURLS['getCSRF']!), headers: headers);
     if (response.statusCode == 200) {
       // final jsonResponse = json.decode(response.body);
       final cookies = response.headers['set-cookie']!;
@@ -85,7 +91,6 @@ class API {
 
   static Future<Map<String, dynamic>> login(Map<String, String> data) async{
     String csrf = await RequestHelper.getCSRFToken();
-    const url = 'https://leonardo674.pythonanywhere.com/api/user/login/';
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'csrftoken=$csrf;',
@@ -93,7 +98,7 @@ class API {
       'Accept': '*/*',
       'Connection': 'keep-alive',
     };
-    final response = await RequestHelper.sendPostRequest(url, headers, data);
+    final response = await RequestHelper.sendPostRequest(apiURLS['login']!, headers, data);
     Map<String, dynamic> jsonResponse = json.decode(response.body);
 
     if (response.statusCode == 200) {
@@ -115,15 +120,15 @@ class API {
   }
 
   static Future<Map<String, dynamic>> logout() async{
-    const url = 'http://10.0.2.2:8000/api/user/logout/';
+    String csrf = await RequestHelper.getCSRFToken();
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      // 'Cookie': 'csrftoken=$csrf;',
-      // 'X-CSRFToken': csrf,
+      'Cookie': 'csrftoken=$csrf;',
+      'X-CSRFToken': csrf,
       'Accept': '*/*',
       'Connection': 'keep-alive',
     };
-    final response = await RequestHelper.sendPostRequest(url, headers, {});
+    final response = await RequestHelper.sendPostRequest(apiURLS['logout']!, headers, {});
     Map<String, dynamic> jsonResponse = json.decode(response.body);
 
     if (response.statusCode == 200) {
@@ -145,7 +150,6 @@ class API {
 
   static Future<Map<String, dynamic>> register(Map<String, String> data) async{
     String csrf = await RequestHelper.getCSRFToken();
-    const url = 'https://leonardo674.pythonanywhere.com/api/user/register/';
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'csrftoken=$csrf;',
@@ -153,7 +157,7 @@ class API {
       'Accept': '*/*',
       'Connection': 'keep-alive',
     };
-    final response = await RequestHelper.sendPostRequest(url, headers, data);
+    final response = await RequestHelper.sendPostRequest(apiURLS['register']!, headers, data);
     Map<String, dynamic> jsonResponse = json.decode(response.body);
     // Map<String, dynamic> jsonResponse = json.decode('{"status": true, "messages": {"success": "User \'testadmin6\' created successfully", "attributes": [{"level": 25, "message": "User \'testadmin6\' created successfully", "extra_tags": "extra tags value"}]}}');
 

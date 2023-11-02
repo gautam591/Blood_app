@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       if(response["status"] == true) {
                         // print("Response under true: $response");
                         Alerts.showSuccess(response["messages"]["success"]);
-                        Alerts.showGeneral("Please proceed to login with the user (${usernameController.text}) you just registered!");
+                        Alerts.showGeneral("Please proceed to login with the user (${usernameController.text}) you just registered with!");
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => LoginPage()),
