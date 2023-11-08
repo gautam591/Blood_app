@@ -108,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       MaterialPageRoute(builder: (context) => const RegisterPage()), // Navigate to RegisterPage
                     );
-                    // Implement registration logic here
                     _emailFocus.unfocus();
                     _passwordFocus.unfocus();
                   },

@@ -85,6 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     if(_formKey.currentState!.validate()) {
                       final data = {
                         'username': usernameController.text,
+                        'display_name': usernameController.text,
                         'email': emailController.text,
                         'phone_number': phoneNumberController.text,
                         'password': passwordController.text,
@@ -103,7 +104,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         Alerts.showError(response["messages"]["error"]);
                       }
                     }
-                    // Handle registration logic here
                     if (kDebugMode) {
                       print("Registration button pressed.");
                     }

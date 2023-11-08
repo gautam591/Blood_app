@@ -12,6 +12,8 @@ import 'requests.dart' as request;
 
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -19,10 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   Map<String, dynamic> user = {'uid': 'Loading...'};
-
-  TextEditingController titleController = TextEditingController();
   bool dataFetched = false; // Add a flag to track if data has been fetched.
-
 
   final List<Widget> _pages = [
     Page1(),

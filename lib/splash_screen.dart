@@ -3,6 +3,8 @@ import 'package:post_found/home.dart';
 import 'login.dart'; // Import the HomeScreen widget
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
