@@ -11,14 +11,17 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKeyAccountInformation = GlobalKey<FormState>();
+  final _formKeyPersonalInformation = GlobalKey<FormState>();
+  final _formKeyBloodGroupInformation = GlobalKey<FormState>();
+  final _formKeyAddressInformation = GlobalKey<FormState>();
+  Map<int, GlobalKey<FormState>> formKeys= {};
+
   // Define controllers for text fields
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
-  // TextEditingController passwordController = TextEditingController();
-  // TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController bloodGroupController = TextEditingController();
   TextEditingController addressCountryController = TextEditingController();
@@ -87,9 +90,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Stepper(
           currentStep: currentStep,
           onStepContinue: () {
+            formKeys = {
+              0: _formKeyAccountInformation,
+              1: _formKeyPersonalInformation,
+              2: _formKeyBloodGroupInformation,
+              3: _formKeyAddressInformation,
+            };
             if (currentStep < 4) {
-              _formKey.currentState!.save();
-              if(_formKey.currentState!.validate()) {
+              formKeys[currentStep]!.currentState!.save();
+              if(formKeys[currentStep]!.currentState!.validate()) {
                 setState(() {
                   currentStep++;
                 });
@@ -120,7 +129,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Step(
               title: const Text('Account Information'),
               content: Form(
-                key: _formKey,
+                key: _formKeyAccountInformation,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -135,74 +144,89 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             Step(
               title: const Text('Personal Information'),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 5),
-                  _buildTextField("First Name", firstNameController),
-                  const SizedBox(height: 15),
-                  _buildTextField("Last Name", lastNameController),
-                  const SizedBox(height: 15),
-                  _buildTextField("Phone Number*", phoneNumberController),
-                ],
+              content: Form(
+                key: _formKeyPersonalInformation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 5),
+                    _buildTextField("First Name", firstNameController),
+                    const SizedBox(height: 15),
+                    _buildTextField("Last Name", lastNameController),
+                    const SizedBox(height: 15),
+                    _buildTextField("Phone Number*", phoneNumberController),
+                  ],
+                ),
               ),
               isActive: currentStep == 1,
             ),
             Step(
               title: const Text('Blood Group Information'),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DropdownButtonFormField2<String>(
-                    isExpanded: false,
-                    value: selectedBloodGroup,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: const BorderSide(
-                          width: 0.5, // Border width
+              content: Form(
+                key: _formKeyBloodGroupInformation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DropdownButtonFormField2<String>(
+                      isExpanded: false,
+                      value: selectedBloodGroup,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'You must choose your blood group';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            width: 0.5, // Border width
+                          ),
                         ),
+                        // filled: true,
+                        // fillColor: Colors.grey[200],
+                        hintText: 'Select your Blood Group*',
                       ),
-                      // filled: true,
-                      // fillColor: Colors.grey[200],
-                      hintText: 'Select your Blood Group*',
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'A+', child: Text('A+ (A Positive)')),
-                      DropdownMenuItem(value: 'A-', child: Text('A- (A Negative)')),
-                      DropdownMenuItem(value: 'B+', child: Text('B+ (B Positive)')),
-                      DropdownMenuItem(value: 'B-', child: Text('B- (B Negative)')),
-                      DropdownMenuItem(value: 'O+', child: Text('O+ (O Positive)')),
-                      DropdownMenuItem(value: 'O-', child: Text('O- (O Negative)')),
-                      DropdownMenuItem(value: 'AB+', child: Text('AB+ (AB Positive)')),
-                      DropdownMenuItem(value: 'AB-', child: Text('AB- (AB Negative)')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedBloodGroup = value;
-                      });
-                    },
-                  )
-                ],
+                      items: const [
+                        DropdownMenuItem(value: 'A+', child: Text('A+ (A Positive)')),
+                        DropdownMenuItem(value: 'A-', child: Text('A- (A Negative)')),
+                        DropdownMenuItem(value: 'B+', child: Text('B+ (B Positive)')),
+                        DropdownMenuItem(value: 'B-', child: Text('B- (B Negative)')),
+                        DropdownMenuItem(value: 'O+', child: Text('O+ (O Positive)')),
+                        DropdownMenuItem(value: 'O-', child: Text('O- (O Negative)')),
+                        DropdownMenuItem(value: 'AB+', child: Text('AB+ (AB Positive)')),
+                        DropdownMenuItem(value: 'AB-', child: Text('AB- (AB Negative)')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBloodGroup = value;
+                        });
+                      },
+                    )
+                  ],
+                ),
               ),
               isActive: currentStep == 2,
             ),
 
             Step(
               title: const Text('Address Information'),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 5),
-                  _buildTextField("Country*", addressCountryController),
-                  const SizedBox(height: 15),
-                  _buildTextField("State*", addressStateController),
-                  const SizedBox(height: 15),
-                  _buildTextField("City*", addressCityController),
-                  const SizedBox(height: 15),
-                  _buildTextField("Area", addressAreaController),
+              content: Form(
+                key: _formKeyAddressInformation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 5),
+                    _buildTextField("Country*", addressCountryController),
+                    const SizedBox(height: 15),
+                    _buildTextField("State*", addressStateController),
+                    const SizedBox(height: 15),
+                    _buildTextField("City*", addressCityController),
+                    const SizedBox(height: 15),
+                    _buildTextField("Area", addressAreaController),
 
-                ],
+                  ],
+                ),
               ),
               isActive: currentStep == 3,
             ),

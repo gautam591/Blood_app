@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool refreshCSRF = true;
-const host = 'http://leonardo674.pythonanywhere.com';
+// const host = 'http://leonardo674.pythonanywhere.com';
+const host = 'http://samirvadel31.pythonanywhere.com';
+// const host = 'http://10.0.2.2:8000/';
 const apiURLS = {
   'getCSRF'   : '$host/api/user/getcsrf/',
   'login'     : '$host/api/user/login/',
