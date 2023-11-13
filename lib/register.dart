@@ -1,16 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
 import 'login.dart';
 import 'requests.dart' as request;
 import 'alerts.dart';
-
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
@@ -50,7 +48,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 16),
                 _buildTextField("Email Address *", emailController, customkeyboardType: TextInputType.emailAddress),
                 const SizedBox(height: 16),
-                _buildTextField("Phone Number", phoneNumberController, customkeyboardType: TextInputType.phone, customValidator: (value) {return null;}),
+                _buildTextField("Phone Number", phoneNumberController, customkeyboardType: TextInputType.phone,
+                    customValidator: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter phone number';
+                      }
+                      else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number (+9771234567890)';
+                      }
+                      return null;
+                    }),
                 const SizedBox(height: 16),
                 _buildTextField("Password *", passwordController, customkeyboardType: TextInputType.visiblePassword, customObscureText: true, customValidator: (value) {
                   if (value == null || value.isEmpty) {
@@ -93,8 +102,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       Map<String, dynamic> response = await request.API.register(data);
                       if(response["status"] == true) {
                         // print("Response under true: $response");
-                        Alerts.showSuccess(response["messages"]["success"]);
-                        Alerts.showGeneral("Please proceed to login with the user (${usernameController.text}) you just registered with!");
+                        // Alerts.showSuccess(response["messages"]["success"]);
+                        Alerts.showSuccess("Successfully registered!. Please proceed to login with the user (${usernameController.text}) you just registered with!");
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const LoginPage()),

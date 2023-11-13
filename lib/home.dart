@@ -5,17 +5,16 @@ import 'Tabs/page1.dart'; // Import the Page1 widget
 import 'Tabs/page2.dart'; // Import the Page2 widget
 import 'Tabs/page3.dart'; // Import the Page3 widget
 import 'Tabs/page4.dart'; // Import the Page4 widget
+import 'alerts.dart';
 import 'edit_profile.dart';
 import 'login.dart';
 import 'requests.dart' as request;
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -98,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                 Future.delayed(const Duration(seconds: 0), () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (BuildContext context) => EditProfilePage(),
+                      builder: (BuildContext context) => const EditProfilePage(),
                     ),
                   );
                 });
@@ -127,15 +126,18 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               title: const Text('Log Out'),
-              onTap: () {
-                // Navigate to the profile page or perform an action
-                Future.delayed(const Duration(seconds: 0), () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => const LoginPage(),
-                    ),
+              onTap: () async {
+                Map<String, dynamic> response = await request.API.logout();
+                if(response["status"] == true) {
+                  Alerts.showWarning("You have been logged out!");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
                   );
-                });
+                }
+                else{
+                  Alerts.showError("There was a problem logging you out!");
+                }
               },
             ),
             // Add more menu items as needed

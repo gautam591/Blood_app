@@ -1,11 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 class Alerts {
-  static BuildContext? _context;
+  static final BuildContext? _context = MyApp.globalNavKey.currentContext;
 
-  static void setContext(BuildContext context) {
-    _context = context;
-  }
+  // static void setContext(BuildContext context) {
+  //   _context = context;
+  // }
 
   static void showGeneral(String message, {int duration = 4}) {
     _showSnackBar(message, duration);
@@ -25,7 +27,9 @@ class Alerts {
 
   static void _showSnackBar(String message, int duration, [Color? color]) {
     if (_context == null) {
-      print('Context is not set. Call setContext(BuildContext context) first.');
+      if (kDebugMode) {
+        print('Context is not set. Call setContext(BuildContext context) first.');
+      }
       return;
     }
 

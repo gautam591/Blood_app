@@ -1,13 +1,15 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'alerts.dart';
 import 'home.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'requests.dart' as request;
 
 class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({super.key});
+
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
@@ -29,11 +31,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController addressCityController = TextEditingController();
   TextEditingController addressAreaController = TextEditingController();
 
+  List<DropdownMenuItem<String>> cityDropdownItems = [];
+
   Map<String, dynamic> user = {};
+  Map<String, dynamic> userDetails = {};
 
   int currentStep = 0;
   bool complete = false;
-  String? selectedBloodGroup;
 
   _EditProfilePageState() {
     setUserData();
@@ -41,16 +45,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> setUserData() async {
     String userRaw = await request.getLocalData('user') as String;
+    String userDetailsRaw = await request.getLocalData('user_details') as String;
     user = json.decode(userRaw);
+    userDetails = json.decode(userDetailsRaw);
+
     usernameController.text = user['uid'];
     emailController.text = user['email'];
-    phoneNumberController.text = user['phone_number'];
-    // bloodGroupController.text = ;
-    // addressCountryController.text = ;
-    // addressStateController.text = ;
-    // addressCityController.text = ;
-    //  addressAreaController.text = ;
+    phoneNumberController.text = user['phone_number'] ?? '';
+    firstNameController.text = userDetails['first_name'] ?? '';
+    lastNameController.text = userDetails['last_name'] ?? '';
+    bloodGroupController.text = userDetails['blood_group_name'] ?? '';
+    addressCountryController.text = userDetails['country'] ?? '';
+    addressStateController.text = userDetails['state'] ?? '';
+    addressCityController.text = userDetails['city'] ?? '';
+    addressAreaController.text = userDetails['area'] ?? '';
+
+    buildCityDropdown(addressStateController.text);
   }
+
+  Future<void> buildCityDropdown(String state) async {
+    if(state != null && state.isNotEmpty && state!= '') {
+
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +107,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         child: Stepper(
           currentStep: currentStep,
-          onStepContinue: () {
+          onStepContinue: () async {
             formKeys = {
               0: _formKeyAccountInformation,
               1: _formKeyPersonalInformation,
@@ -104,17 +122,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 });
               }
             } else {
-              // Handle registration logic here
-              if (kDebugMode) {
-                print("Registration complete.");
-              }
-              Future.delayed(const Duration(seconds: 0), () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => HomePage(),
-                  ),
-                );
-              });
+                final data = {
+                  'username': usernameController.text,
+                  'email': emailController.text,
+                  'phone_number': phoneNumberController.text,
+                  'first_name': firstNameController.text,
+                  'last_name': lastNameController.text,
+                  'blood_group_name': bloodGroupController.text,
+                  'country': addressCountryController.text,
+                  'state': addressStateController.text,
+                  'city': addressCityController.text,
+                  'area': addressAreaController.text,
+                };
+                Map<String, dynamic> response = await request.API.update(data);
+                if(response["status"] == true) {
+                  Alerts.showSuccess(response["messages"]["success"]);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                }
+                else{
+                  Alerts.showError(response["messages"]["error"]);
+                }
             }
           },
           onStepCancel: () {
@@ -134,9 +164,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 5),
-                    _buildTextField("Username*", usernameController),
+                    _buildTextField("Username* (cannot be changed)", usernameController, customReadOnly: true),
                     const SizedBox(height: 15),
-                    _buildTextField("Email Address*", emailController),
+                    _buildTextField("Email Address*", emailController, customKeyboardType: TextInputType.emailAddress),
                   ],
                 ),
               ),
@@ -150,11 +180,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 5),
-                    _buildTextField("First Name", firstNameController),
+                    _buildTextField("First Name", firstNameController, customKeyboardType: TextInputType.text, customValidator: (value) {return null;}),
                     const SizedBox(height: 15),
-                    _buildTextField("Last Name", lastNameController),
+                    _buildTextField("Last Name", lastNameController, customKeyboardType: TextInputType.text, customValidator: (value) {return null;}),
                     const SizedBox(height: 15),
-                    _buildTextField("Phone Number*", phoneNumberController),
+                    _buildTextField("Phone Number*", phoneNumberController, customValidator: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter phone number';
+                      }
+                      else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number (+9771234567890)';
+                      }
+                      return null;
+                    }),
                   ],
                 ),
               ),
@@ -169,7 +209,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     DropdownButtonFormField2<String>(
                       isExpanded: false,
-                      value: selectedBloodGroup,
+                      value: (bloodGroupController.text).isEmpty? null : bloodGroupController.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'You must choose your blood group';
@@ -180,11 +220,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                           borderSide: const BorderSide(
-                            width: 0.5, // Border width
+                            // width: 0.5, // Border width
                           ),
                         ),
-                        // filled: true,
-                        // fillColor: Colors.grey[200],
                         hintText: 'Select your Blood Group*',
                       ),
                       items: const [
@@ -199,7 +237,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ],
                       onChanged: (value) {
                         setState(() {
-                          selectedBloodGroup = value;
+                          bloodGroupController.text = value ?? '';
                         });
                       },
                     )
@@ -217,13 +255,72 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 5),
-                    _buildTextField("Country*", addressCountryController),
+                    DropdownButtonFormField2<String>(
+                      isExpanded: false,
+                      value: (addressCountryController.text).isEmpty? null : addressCountryController.text,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'You must choose your country';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            // width: 0.5, // Border width
+                          ),
+                        ),
+                        hintText: 'Country*',
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'Nepal', child: Text('Nepal')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          addressCountryController.text = value ?? '';
+                        });
+                      },
+                    ),
                     const SizedBox(height: 15),
-                    _buildTextField("State*", addressStateController),
+                    DropdownButtonFormField2<String>(
+                      isExpanded: false,
+                      value: (addressStateController.text).isEmpty? null : addressStateController.text,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'You must choose your state';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            // width: 0.5, // Border width
+                          ),
+                        ),
+                        hintText: 'State*',
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'Bagmati Province', child: Text('Bagmati Province')),
+                        DropdownMenuItem(value: 'Gandaki Province', child: Text('Gandaki Province')),
+                        DropdownMenuItem(value: 'Karnali Province', child: Text('Karnali Province')),
+                        DropdownMenuItem(value: 'Koshi Province', child: Text('Koshi Province')),
+                        DropdownMenuItem(value: 'Lumbini Province', child: Text('Lumbini Province')),
+                        DropdownMenuItem(value: 'Madhesh Province', child: Text('Madhesh Province')),
+                        DropdownMenuItem(value: 'Sudur Paschimanchal Province', child: Text('Sudur Paschimanchal Province')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          addressStateController.text = value ?? '';
+                          buildCityDropdown(addressStateController.text);
+                        });
+                      },
+                    ),
                     const SizedBox(height: 15),
                     _buildTextField("City*", addressCityController),
                     const SizedBox(height: 15),
-                    _buildTextField("Area", addressAreaController),
+                    _buildTextField("Area", addressAreaController, customValidator: (value) {return null;}),
 
                   ],
                 ),
@@ -250,9 +347,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       String label,
       TextEditingController controller,
       {
-        TextInputType? customkeyboardType,
+        TextInputType? customKeyboardType,
         bool? customObscureText,
         String? Function(dynamic)? customValidator,
+        bool? customReadOnly,
       }
     ){
     return TextFormField(
@@ -265,8 +363,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // borderSide: BorderSide(color: Colors.black),
         ),
       ),
-      keyboardType: customkeyboardType ?? TextInputType.text,
+      keyboardType: customKeyboardType ?? TextInputType.text,
       obscureText: customObscureText ?? false,
+      readOnly:  customReadOnly ?? false,
       validator: customValidator ?? (value) {
         if (value == null || value.isEmpty) {
           return 'This field is required';

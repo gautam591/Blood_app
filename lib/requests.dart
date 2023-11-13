@@ -12,6 +12,7 @@ const apiURLS = {
   'login'     : '$host/api/user/login/',
   'logout'    : '$host/api/user/logout/',
   'register'  : '$host/api/user/register/',
+  'update'  : '$host/api/user/update/',
 };
 
 Future<dynamic> getLocalData(String key) async {
@@ -36,6 +37,8 @@ Future<void> deleteLocalData(String key) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove(key); // Delete a specific item, e.g., user token
 }
+
+
 
 class RequestHelper {
   static Future<String> getCSRFToken() async {
@@ -113,6 +116,7 @@ class API {
         setLocalData({'expiresIn': jsonResponse["data"]["expiresIn"]});
         setLocalData({'username': jsonResponse["data"]["username"]});
         setLocalData({'user': json.encode(jsonResponse["data"]["user"])});
+        setLocalData({'user_details': json.encode(jsonResponse["data"]["user_details"])});
       }
       // print("Success: ${jsonResponse["messages"]["info"]}");
     } else {
@@ -126,6 +130,12 @@ class API {
 
   static Future<Map<String, dynamic>> logout() async{
     String csrf = await RequestHelper.getCSRFToken();
+    deleteLocalData('idToken');
+    deleteLocalData('refreshToken');
+    deleteLocalData('expiresIn');
+    deleteLocalData('username');
+    deleteLocalData('user');
+    deleteLocalData('user_details');
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'csrftoken=$csrf;',
@@ -133,22 +143,20 @@ class API {
       'Accept': '*/*',
       'Connection': 'keep-alive',
     };
-    final response = await RequestHelper.sendPostRequest(apiURLS['logout']!, headers, {});
-    Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-    if (response.statusCode == 200) {
-      if (jsonResponse["status"] == true) {
-        deleteLocalData('idToken');
-        deleteLocalData('refreshToken');
-        deleteLocalData('expiresIn');
-        deleteLocalData('username');
-      }
-    } else {
-      if (kDebugMode) {
-        print('Request failed with status: ${response.statusCode} '
-            '\nResponse Body:\n ${response.body}');
-      }
-    }
+    // final response = await RequestHelper.sendPostRequest(apiURLS['logout']!, headers, {});
+    // Map<String, dynamic> jsonResponse = json.decode(response.body);
+    Map<String, dynamic> jsonResponse = {'status': true};
+    //
+    // if (response.statusCode == 200) {
+    //   if (jsonResponse["status"] == true) {
+    //
+    //   }
+    // } else {
+    //   if (kDebugMode) {
+    //     print('Request failed with status: ${response.statusCode} '
+    //         '\nResponse Body:\n ${response.body}');
+    //   }
+    // }
     return jsonResponse;
 
   }
@@ -168,6 +176,36 @@ class API {
 
     if (response.statusCode == 201) {
       if (jsonResponse["status"] == true) {
+        if (kDebugMode) {
+          print("User created Successfully: ${jsonResponse["messages"]["success"]}");
+        }
+      }
+      // print("Success: ${jsonResponse["messages"]["info"]}");
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<Map<String, dynamic>> update(Map<String, String> data) async{
+    String csrf = await RequestHelper.getCSRFToken();
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Cookie': 'csrftoken=$csrf;',
+      'X-CSRFToken': csrf,
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+    };
+    final response = await RequestHelper.sendPostRequest(apiURLS['update']!, headers, data);
+    Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      if (jsonResponse["status"] == true) {
+        setLocalData({'user': json.encode(jsonResponse["data"]["user"])});
+        setLocalData({'user_details': json.encode(jsonResponse["data"]["user_details"])});
         if (kDebugMode) {
           print("User created Successfully: ${jsonResponse["messages"]["success"]}");
         }
