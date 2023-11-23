@@ -5,14 +5,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 bool refreshCSRF = true;
 // const host = 'http://leonardo674.pythonanywhere.com';
-const host = 'http://samirvadel31.pythonanywhere.com';
-// const host = 'http://10.0.2.2:8000/';
+// const host = 'http://samirvadel31.pythonanywhere.com';
+const host = 'http://10.0.2.2:8000/';
 const apiURLS = {
   'getCSRF'   : '$host/api/user/getcsrf/',
   'login'     : '$host/api/user/login/',
   'logout'    : '$host/api/user/logout/',
   'register'  : '$host/api/user/register/',
   'update'  : '$host/api/user/update/',
+  'createPost'  : '$host/api/user/createPost/',
+  'getPostEmergency'  : '$host/api/user/getPostEmergency/',
+  'getPostRegular'  : '$host/api/user/getPostRegular/',
 };
 
 Future<dynamic> getLocalData(String key) async {
@@ -38,7 +41,18 @@ Future<void> deleteLocalData(String key) async {
   prefs.remove(key); // Delete a specific item, e.g., user token
 }
 
-
+Future<bool> deleteAllLocalData({String flag = 'soft'}) async {
+  final prefs = await SharedPreferences.getInstance();
+  if(flag == 'hard'){
+    await prefs.clear();
+  }
+  else{
+    String csrfValue = prefs.getString('CSRFToken') ?? '';
+    await prefs.clear();
+    await prefs.setString('CSRFToken', csrfValue);
+  }
+  return true;
+}
 
 class RequestHelper {
   static Future<String> getCSRFToken() async {
@@ -129,36 +143,9 @@ class API {
   }
 
   static Future<Map<String, dynamic>> logout() async{
-    String csrf = await RequestHelper.getCSRFToken();
-    deleteLocalData('idToken');
-    deleteLocalData('refreshToken');
-    deleteLocalData('expiresIn');
-    deleteLocalData('username');
-    deleteLocalData('user');
-    deleteLocalData('user_details');
-    final headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Cookie': 'csrftoken=$csrf;',
-      'X-CSRFToken': csrf,
-      'Accept': '*/*',
-      'Connection': 'keep-alive',
-    };
-    // final response = await RequestHelper.sendPostRequest(apiURLS['logout']!, headers, {});
-    // Map<String, dynamic> jsonResponse = json.decode(response.body);
+    deleteAllLocalData();
     Map<String, dynamic> jsonResponse = {'status': true};
-    //
-    // if (response.statusCode == 200) {
-    //   if (jsonResponse["status"] == true) {
-    //
-    //   }
-    // } else {
-    //   if (kDebugMode) {
-    //     print('Request failed with status: ${response.statusCode} '
-    //         '\nResponse Body:\n ${response.body}');
-    //   }
-    // }
     return jsonResponse;
-
   }
 
   static Future<Map<String, dynamic>> register(Map<String, String> data) async{
@@ -172,7 +159,6 @@ class API {
     };
     final response = await RequestHelper.sendPostRequest(apiURLS['register']!, headers, data);
     Map<String, dynamic> jsonResponse = json.decode(response.body);
-    // Map<String, dynamic> jsonResponse = json.decode('{"status": true, "messages": {"success": "User \'testadmin6\' created successfully", "attributes": [{"level": 25, "message": "User \'testadmin6\' created successfully", "extra_tags": "extra tags value"}]}}');
 
     if (response.statusCode == 201) {
       if (jsonResponse["status"] == true) {
@@ -218,5 +204,99 @@ class API {
       }
     }
     return jsonResponse;
+  }
+
+  static Future<Map<String, dynamic>> createPost(Map<String, String> data) async{
+    String csrf = await RequestHelper.getCSRFToken();
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Cookie': 'csrftoken=$csrf;',
+      'X-CSRFToken': csrf,
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+    };
+    final response = await RequestHelper.sendPostRequest(apiURLS['createPost']!, headers, data);
+    Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 201) {
+      if (jsonResponse["status"] == true) {
+        if (kDebugMode) {
+          print("New post created successfully.");
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<Map<String, dynamic>> getPostEmergency({bool refresh = false}) async{
+    Map<String, dynamic> jsonResponse = { };
+    if (refresh == false) {
+      String itemsRaw = await getLocalData('postEmergency') as String;
+      jsonResponse['data'] = json.decode(itemsRaw);
+      jsonResponse["status"] = true;
+      return jsonResponse;
+    }
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+    };
+    final response = await RequestHelper.sendGetRequest(apiURLS['getPostEmergency']!, headers);
+    jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      if (jsonResponse["status"] == true) {
+        deleteLocalData('postEmergency');
+        setLocalData({'postEmergency': json.encode(jsonResponse["data"])});
+      }
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<Map<String, dynamic>> getPostRegular({bool refresh = false}) async{
+    Map<String, dynamic> jsonResponse = { };
+    if (refresh == false) {
+      String itemsRaw = await getLocalData('postRegular') as String;
+      jsonResponse['data'] = json.decode(itemsRaw);
+      jsonResponse["status"] = true;
+      return jsonResponse;
+    }
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+    };
+    final response = await RequestHelper.sendGetRequest(apiURLS['getPostRegular']!, headers);
+    jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      if (jsonResponse["status"] == true) {
+        deleteLocalData('postRegular');
+        setLocalData({'postRegular': json.encode(jsonResponse["data"])});
+      }
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<void> getAllData() async{
+    await API.getPostEmergency(refresh: true);
+    await API.getPostRegular(refresh: true);
   }
 }

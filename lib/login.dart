@@ -82,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                       Map<String, dynamic> response = await request.API.login(data);
                       if(response["status"] == true) {
                         Alerts.showSuccess(response["messages"]["success"]);
+                        await request.API.getAllData();
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => HomePage()),

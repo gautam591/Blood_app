@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'Tabs/page1.dart'; // Import the Page1 widget
-import 'Tabs/page2.dart'; // Import the Page2 widget
-import 'Tabs/page3.dart'; // Import the Page3 widget
-import 'Tabs/page4.dart'; // Import the Page4 widget
+import 'Tabs/emergency_tab.dart'; // Import the Page1 widget
+import 'Tabs/create_tab.dart'; // Import the Page2 widget
+import 'Tabs/post_tab.dart'; // Import the Page3 widget
+import 'Tabs/notification_tab.dart'; // Import the Page4 widget
 import 'alerts.dart';
 import 'edit_profile.dart';
 import 'login.dart';
@@ -23,10 +23,10 @@ class _HomePageState extends State<HomePage> {
   bool dataFetched = false; // Add a flag to track if data has been fetched.
 
   final List<Widget> _pages = [
-    Page1(),
-    Page2(),
-    Page3(),
-    Page4(),
+    EmergencyTab(),
+    PostTab(),
+    const CreatePage(),
+    NotificationPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -149,18 +149,18 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red.shade200,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.bloodtype_rounded,color: Colors.black),
+            icon: const Icon(Icons.bloodtype_outlined,color: Colors.black),
             label: 'Emergency',
             backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.newspaper_outlined,color: Colors.black),
-            label: 'Create Post',
+            icon: const Icon(Icons.newspaper_rounded,color: Colors.black),
+            label: 'Posts',
             backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.event_available_outlined,color: Colors.black),
-            label: 'Events',
+            icon: const Icon(Icons.add_box_outlined,color: Colors.black),
+            label: 'Create Post',
             backgroundColor: Colors.red.shade300,
           ),
           BottomNavigationBarItem(
