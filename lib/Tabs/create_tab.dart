@@ -199,7 +199,7 @@ class _EmergencyFormState extends State<CreatePage> {
                         'create_ts': dateNow,
                         'urgency_level': urgencyLevelController.text,
                         'blood_group': bloodGroupController.text,
-                        'country': addressCityController.text,
+                        'country': addressCountryController.text,
                         'state': addressStateController.text,
                         'city': addressCityController.text,
                         'area': addressAreaController.text,

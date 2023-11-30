@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:post_found/alerts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool refreshCSRF = true;
@@ -16,6 +19,7 @@ const apiURLS = {
   'createPost'  : '$host/api/user/createPost/',
   'getPostEmergency'  : '$host/api/user/getPostEmergency/',
   'getPostRegular'  : '$host/api/user/getPostRegular/',
+  'getAlerts'  : '$host/api/user/getAlerts/',
 };
 
 Future<dynamic> getLocalData(String key) async {
@@ -53,6 +57,18 @@ Future<bool> deleteAllLocalData({String flag = 'soft'}) async {
   }
   return true;
 }
+
+// mixin ApiErrorHandler {
+//   Future<Object?> tryCatch<T>(Future<T> Function() apiCall) async {
+//     try {
+//       return await apiCall();
+//     } catch (e) {
+//       print('API Error: $e');
+//       Future<http.Response> response = http.Response('{"error": $e', 500) as Future<http.Response>;
+//       return response;
+//     }
+//   }
+// }
 
 class RequestHelper {
   static Future<String> getCSRFToken() async {
@@ -95,11 +111,19 @@ class RequestHelper {
   }
 
   static Future<http.Response> sendGetRequest(String url, Map<String, String> headers) async {
-    return http.get(Uri.parse(url), headers: headers);
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      return response;
+    } on TimeoutException catch (e) {
+      Alerts.showError("Client request timed out!");
+      return http.Response('{"error": "$e"}', 500);
+    } catch (e) {
+      Alerts.showError("$e");
+      return http.Response('{"error": "$e"}', 500);
+    }
   }
 
   static Future<http.Response> sendPostRequest(String url, Map<String, String> headers, Map<String, String> data) async {
-    // String jsonBody = json.encode(data);
     return http.post(Uri.parse(url), headers: headers, body: data);
   }
 
@@ -295,8 +319,48 @@ class API {
     return jsonResponse;
   }
 
-  static Future<void> getAllData() async{
+  static Future<Map<String, dynamic>> getAlerts(String username, {bool? refresh}) async{
+    Map<String, dynamic> jsonResponse = { };
+    if (refresh == false) {
+      String itemsRaw = await getLocalData('notifications') as String;
+      jsonResponse['data'] = json.decode(itemsRaw);
+      jsonResponse["status"] = true;
+      return jsonResponse;
+    }
+    final dateNow = DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now());
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      // 'Cookie': 'csrftoken=$csrf;',
+      // 'X-CSRFToken': csrf,
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+      'username': username,
+      'today': dateNow
+    };
+
+    final response = await RequestHelper.sendGetRequest(apiURLS['getAlerts']!, headers);
+    jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      if (jsonResponse["status"] == true) {
+        deleteLocalData('notifications');
+        setLocalData({'notifications': json.encode(jsonResponse["data"])});
+      }
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<void> getAllData(String username) async{
     await API.getPostEmergency(refresh: true);
     await API.getPostRegular(refresh: true);
+    await API.getAlerts(username, refresh: true);
   }
+
+
+
 }

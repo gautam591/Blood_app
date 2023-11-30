@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     EmergencyTab(),
     PostTab(),
     const CreatePage(),
-    NotificationPage(),
+    NotificationTab(),
   ];
 
   void _onItemTapped(int index) {
