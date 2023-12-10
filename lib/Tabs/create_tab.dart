@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:post_found/requests.dart' as request;
-import 'package:post_found/alerts.dart';
+import 'package:Manabata/requests.dart' as request;
+import 'package:Manabata/alerts.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({super.key});

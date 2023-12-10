@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-# post_found
+# Manabata App
 
 A new Flutter project.
 

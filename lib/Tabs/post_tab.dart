@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:post_found/requests.dart';
-// import 'package:post_found/alerts.dart';
+import 'package:Manabata/requests.dart';
 
 class PostTab extends StatefulWidget {
   const PostTab({super.key});
