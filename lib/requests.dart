@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:Manabata/alerts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'NotificationService.dart';
+
 bool refreshCSRF = true;
-const host = 'http://samirvadel31.pythonanywhere.com';
-// const host = 'http://10.0.2.2:8000/';
+// const host = 'http://samirvadel31.pythonanywhere.com';
+const host = 'http://10.0.2.2:8000/';
 const apiURLS = {
   'getCSRF'   : '$host/api/user/getcsrf/',
   'login'     : '$host/api/user/login/',
@@ -19,6 +21,8 @@ const apiURLS = {
   'getPostEmergency'  : '$host/api/user/getPostEmergency/',
   'getPostRegular'  : '$host/api/user/getPostRegular/',
   'getAlerts'  : '$host/api/user/getAlerts/',
+  'putReaction'  : '$host/api/user/putReaction/',
+  'getReactions'  : '$host/api/user/getReactions/',
 };
 
 Future<dynamic> getLocalData(String key) async {
@@ -256,7 +260,7 @@ class API {
     return jsonResponse;
   }
 
-  static Future<Map<String, dynamic>> getPostEmergency({bool refresh = false}) async{
+  static Future<Map<String, dynamic>> getPostEmergency(String username, {bool refresh = false}) async{
     Map<String, dynamic> jsonResponse = { };
     if (refresh == false) {
       String itemsRaw = await getLocalData('postEmergency') as String;
@@ -264,10 +268,13 @@ class API {
       jsonResponse["status"] = true;
       return jsonResponse;
     }
+    final dateNow = DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now());
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': '*/*',
       'Connection': 'keep-alive',
+      'today': dateNow,
+      'username': username,
     };
     final response = await RequestHelper.sendGetRequest(apiURLS['getPostEmergency']!, headers);
     jsonResponse = json.decode(response.body);
@@ -287,7 +294,7 @@ class API {
     return jsonResponse;
   }
 
-  static Future<Map<String, dynamic>> getPostRegular({bool refresh = false}) async{
+  static Future<Map<String, dynamic>> getPostRegular(String username, {bool refresh = false}) async{
     Map<String, dynamic> jsonResponse = { };
     if (refresh == false) {
       String itemsRaw = await getLocalData('postRegular') as String;
@@ -295,10 +302,13 @@ class API {
       jsonResponse["status"] = true;
       return jsonResponse;
     }
+    final dateNow = DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now());
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': '*/*',
       'Connection': 'keep-alive',
+      'today': dateNow,
+      'username': username,
     };
     final response = await RequestHelper.sendGetRequest(apiURLS['getPostRegular']!, headers);
     jsonResponse = json.decode(response.body);
@@ -320,6 +330,22 @@ class API {
 
   static Future<Map<String, dynamic>> getAlerts(String username, {bool? refresh}) async{
     Map<String, dynamic> jsonResponse = { };
+    if (username == '#true#') {
+      String userRaw = await getLocalData('user') as String;
+      if(userRaw != ''){
+        Map<String, dynamic> user = json.decode(userRaw);
+        username  = user['uid'];
+      }
+      else {
+        jsonResponse["status"] = false;
+        return jsonResponse;
+      }
+    }
+    else if (username == '#false#') {
+      jsonResponse["status"] = false;
+      return jsonResponse;
+    }
+
     if (refresh == false) {
       String itemsRaw = await getLocalData('notifications') as String;
       jsonResponse['data'] = json.decode(itemsRaw);
@@ -327,10 +353,11 @@ class API {
       return jsonResponse;
     }
     final dateNow = DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now());
+    if (kDebugMode) {
+      print("Datetime now: $dateNow");
+    }
     final headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      // 'Cookie': 'csrftoken=$csrf;',
-      // 'X-CSRFToken': csrf,
       'Accept': '*/*',
       'Connection': 'keep-alive',
       'username': username,
@@ -342,8 +369,50 @@ class API {
 
     if (response.statusCode == 200) {
       if (jsonResponse["status"] == true) {
-        deleteLocalData('notifications');
-        setLocalData({'notifications': json.encode(jsonResponse["data"])});
+        String oldItemsRaw = await getLocalData('notifications') as String;
+        Map<String, dynamic> oldJsonData = { };
+        if(oldItemsRaw != '') {
+          oldJsonData = json.decode(oldItemsRaw);
+        }
+        Map<String, dynamic> newJsonData = jsonResponse["data"];
+
+        if (oldJsonData.keys.toList().toString() != newJsonData.keys.toList().toString()) {
+          // print("Old: " + oldJsonData.keys.toList().toString());
+          // print("new: " + newJsonData.keys.toList().toString());
+          String key = newJsonData.keys.toList()[0];
+          NotificationService notificationService =  NotificationService();
+          notificationService.showNotification(
+              title: "Emergency blood request near your area!",
+              body: newJsonData[key]
+          );
+          deleteLocalData('notifications');
+          setLocalData({'notifications': json.encode(jsonResponse["data"])});
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        print('Request failed with status: ${response.statusCode} '
+            '\nResponse Body:\n ${response.body}');
+      }
+    }
+    return jsonResponse;
+  }
+
+  static Future<Map<String, dynamic>> putReaction(Map<String, String> data) async{
+    String csrf = await RequestHelper.getCSRFToken();
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Cookie': 'csrftoken=$csrf;',
+      'X-CSRFToken': csrf,
+      'Accept': '*/*',
+      'Connection': 'keep-alive',
+    };
+    final response = await RequestHelper.sendPostRequest(apiURLS['putReaction']!, headers, data);
+    Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 201) {
+      if (jsonResponse["status"] == true) {
+
       }
     } else {
       if (kDebugMode) {
@@ -355,11 +424,8 @@ class API {
   }
 
   static Future<void> getAllData(String username) async{
-    await API.getPostEmergency(refresh: true);
-    await API.getPostRegular(refresh: true);
+    await API.getPostEmergency(username, refresh: true);
+    await API.getPostRegular(username, refresh: true);
     await API.getAlerts(username, refresh: true);
   }
-
-
-
 }

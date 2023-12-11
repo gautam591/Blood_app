@@ -214,9 +214,9 @@ class _EmergencyFormState extends State<CreatePage> {
                         // addressCityController.clear();
                         // addressStateController.clear();
                         addressCityController.clear();
-                        // addressAreaController.clear();
-                        // titleController.clear();
-                        // contentController.clear();
+                        addressAreaController.clear();
+                        titleController.clear();
+                        contentController.clear();
                       }
                       else{
                         Alerts.showError(response["messages"]["error"]);

@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.red.shade200,
+        backgroundColor: Colors.red.shade300,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.bloodtype_outlined,color: Colors.black),
@@ -156,17 +156,17 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.newspaper_rounded,color: Colors.black),
             label: 'Posts',
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.add_box_outlined,color: Colors.black),
             label: 'Create Post',
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: Colors.red.shade400,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.notifications_active,color: Colors.black),
             label: 'Notification',
-            backgroundColor: Colors.red.shade300,
+            backgroundColor: Colors.red.shade400,
           ),
         ],
         currentIndex: _selectedIndex,
